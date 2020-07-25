@@ -25,16 +25,29 @@ NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
 //==============================================================================
 void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
-    g.setColour (juce::Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    g.setColour(juce::Colours::black);
+    if(!audioProcessor.getIfAudioOnChannel(0))
+    {
+        //Left rectangle
+        g.drawRect(50, 50, 100, 100);
+    }
+    else
+    {
+        g.fillRect(50, 50, 100, 100);
+    }
+    
+    if(!audioProcessor.getIfAudioOnChannel(1))
+    {
+        //Right rectangle
+        g.drawRect(getWidth()-150, 50, 100, 100);
+    }
+    else
+    {
+        g.fillRect(getWidth()-150, 50, 100, 100);
+    }
 }
 
 void NewProjectAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    
 }
