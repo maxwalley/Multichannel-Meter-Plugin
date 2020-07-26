@@ -13,8 +13,9 @@
 //==============================================================================
 /**
 */
-class NewProjectAudioProcessor  : public juce::AudioProcessor,
-                                    public juce::ChangeBroadcaster
+class NewProjectAudioProcessor  :   public juce::AudioProcessor,
+                                    public juce::ChangeBroadcaster,
+                                    public juce::Timer
 {
 public:
     //==============================================================================
@@ -55,11 +56,13 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     //0 for left - 1 for right
-    float getAudioLevelOnChannel(int channel) const;
+    float getPeakLevelOnChannel(int channel) const;
     
 private:
+    
+    void timerCallback() override;
    
-    std::vector<float> audioLevelOnChannel;
+    std::vector<float> peakLevelOnChannel;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)
 };

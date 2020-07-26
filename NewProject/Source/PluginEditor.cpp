@@ -32,12 +32,7 @@ void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
     //Draws the outline for the left channel
     g.drawRect(50, 50, 100, 100);
     
-    float leftLevel = audioProcessor.getAudioLevelOnChannel(0);
-    
-    if(leftLevel < 0)
-    {
-        leftLevel *= -1;
-    }
+    float leftLevel = audioProcessor.getPeakLevelOnChannel(0);
     
     leftLevel *= 100;
     
@@ -46,12 +41,7 @@ void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
     
     g.drawRect(getWidth()-150, 50, 100, 100);
     
-    float rightLevel = audioProcessor.getAudioLevelOnChannel(1);
-    
-    if(rightLevel < 0)
-    {
-        rightLevel *= -1;
-    }
+    float rightLevel = audioProcessor.getPeakLevelOnChannel(1);
     
     rightLevel *= 100;
     

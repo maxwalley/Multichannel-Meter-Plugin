@@ -95,6 +95,9 @@ void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    peakLevelOnChannel.clear();
+    
+    juce::Timer::startTimer(10);
 }
 
 void NewProjectAudioProcessor::releaseResources()
@@ -133,10 +136,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     int totalNumInputChannels  = getTotalNumInputChannels();
     int totalNumOutputChannels = getTotalNumOutputChannels();
     
-    for(int i = 0; i < totalNumInputChannels; i++)
-    {
-        audioLevelOnChannel.push_back(0.0);
-    }
+    peakLevelOnChannel.resize(totalNumInputChannels, 0.0);
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -159,8 +159,17 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     {
         float* channelData = buffer.getWritePointer (channel);
 
-        audioLevelOnChannel[channel] = channelData[buffer.getNumSamples()-1];
-        sendChangeMessage();
+        float tempValue = channelData[buffer.getNumSamples()-1];
+        
+        if(tempValue < 0)
+        {
+            tempValue *= -1;
+        }
+        
+        if(tempValue > peakLevelOnChannel[channel])
+        {
+            peakLevelOnChannel[channel] = tempValue;
+        }
     }
 }
 
@@ -189,14 +198,29 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
     // whose contents will have been created by the getStateInformation() call.
 }
 
-float NewProjectAudioProcessor::getAudioLevelOnChannel(int channel) const
+float NewProjectAudioProcessor::getPeakLevelOnChannel(int channel) const
 {
-    if(channel >= 0 && channel < audioLevelOnChannel.size())
+    if(channel >= 0 && channel < peakLevelOnChannel.size())
     {
-        return audioLevelOnChannel[channel];
+        return peakLevelOnChannel[channel];
     }
     
     return false;
+}
+
+void NewProjectAudioProcessor::timerCallback()
+{
+    for(int i = 0; i < peakLevelOnChannel.size(); i++)
+    {
+        if(peakLevelOnChannel.size() > 0)
+        {
+            if(peakLevelOnChannel[i] > 0.01)
+            {
+                peakLevelOnChannel[i] = peakLevelOnChannel[i] - 0.01;
+                sendChangeMessage();
+            }
+        }
+    }
 }
 
 //==============================================================================
