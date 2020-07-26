@@ -135,7 +135,7 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     
     for(int i = 0; i < totalNumInputChannels; i++)
     {
-        audioOnChannel.push_back(i);
+        audioLevelOnChannel.push_back(0.0);
     }
 
     // In case we have more outputs than inputs, this code clears any output
@@ -159,22 +159,8 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     {
         float* channelData = buffer.getWritePointer (channel);
 
-        for(int sample = 0; sample < buffer.getNumSamples(); ++sample)
-        {
-            if(channelData[sample] != 0)
-            {
-                audioOnChannel[channel] = true;
-            }
-            else
-            {
-                audioOnChannel[channel] = false;
-            }
-        }
-    }
-    
-    if(getActiveEditor() != nullptr)
-    {
-        getActiveEditor()->repaint();
+        audioLevelOnChannel[channel] = channelData[buffer.getNumSamples()-1];
+        sendChangeMessage();
     }
 }
 
@@ -203,11 +189,11 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
     // whose contents will have been created by the getStateInformation() call.
 }
 
-bool NewProjectAudioProcessor::getIfAudioOnChannel(int channel) const
+float NewProjectAudioProcessor::getAudioLevelOnChannel(int channel) const
 {
-    if(channel >= 0 && channel < audioOnChannel.size())
+    if(channel >= 0 && channel < audioLevelOnChannel.size())
     {
-        return audioOnChannel[channel];
+        return audioLevelOnChannel[channel];
     }
     
     return false;

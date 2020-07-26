@@ -13,7 +13,8 @@
 //==============================================================================
 /**
 */
-class NewProjectAudioProcessor  : public juce::AudioProcessor
+class NewProjectAudioProcessor  : public juce::AudioProcessor,
+                                    public juce::ChangeBroadcaster
 {
 public:
     //==============================================================================
@@ -54,11 +55,11 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     //0 for left - 1 for right
-    bool getIfAudioOnChannel(int channel) const;
+    float getAudioLevelOnChannel(int channel) const;
     
 private:
    
-    std::vector<bool> audioOnChannel;
+    std::vector<float> audioLevelOnChannel;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)
 };
