@@ -36,7 +36,7 @@ double InputGainSlider::getValueFromText(const juce::String& text)
 
 juce::String InputGainSlider::getTextFromValue(double value)
 {
-    //otherwise it returns +0.00 dB
+    //this is needed to get rid of the + in +0.00 dB
     if(value == 1.0)
     {
         return "0.00 dB";
@@ -60,7 +60,6 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     inputGainSlider.setValue(0.5);
     inputGainSlider.setRange(0, 1);
     inputGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, inputGainSlider.getWidth(), 20);
-    inputGainSlider.addListener(this);
     inputGainSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::black);
 }
 
@@ -101,9 +100,4 @@ void NewProjectAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcas
 {
     repaint(50, 50, 100, 100);
     repaint(getWidth()-150, 50, 100, 100);
-}
-
-void NewProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
-{
-    audioProcessor.setGain(slider->getValue());
 }

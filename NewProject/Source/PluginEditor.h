@@ -29,8 +29,7 @@ private:
 /**
 */
 class NewProjectAudioProcessorEditor  : public juce::AudioProcessorEditor,
-                                        public juce::ChangeListener,
-                                        public juce::Slider::Listener
+                                        public juce::ChangeListener
 {
 public:
     NewProjectAudioProcessorEditor (NewProjectAudioProcessor&);
@@ -43,13 +42,11 @@ public:
 private:
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
     
-    void sliderValueChanged(juce::Slider* slider) override;
-    
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     NewProjectAudioProcessor& audioProcessor;
     
-    juce::Slider inputGainSlider;
+    InputGainSlider inputGainSlider;
     
     juce::AudioProcessorValueTreeState::SliderAttachment gainSliderAttachment;
 

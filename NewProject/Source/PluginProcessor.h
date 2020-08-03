@@ -58,8 +58,6 @@ public:
     //0 for left - 1 for right
     float getPeakLevelOnChannel(int channel) const;
     
-    void setGain(float newGain);
-    
     juce::AudioProcessorValueTreeState& getVTS();
     
 private:
@@ -69,8 +67,6 @@ private:
     std::vector<float> peakLevelOnChannel;
     
     juce::AudioProcessorValueTreeState parameters;
-    
-    float gain;
-    //==============================================================================
+     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)
 };
