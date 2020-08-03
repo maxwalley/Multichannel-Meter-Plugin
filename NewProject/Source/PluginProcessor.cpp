@@ -19,9 +19,10 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), parameters(*this, nullptr, juce::Identifier("Parameters"), juce::AudioProcessorValueTreeState::ParameterLayout(std::make_unique<juce::AudioParameterFloat>("gain", "Gain", juce::NormalisableRange<float>(0.0, 1.0), 0.5)))
 #endif
 {
+    gain = 0.5;
 }
 
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
@@ -159,6 +160,11 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     {
         float* channelData = buffer.getWritePointer (channel);
 
+        for(int sample = 0; sample < buffer.getNumSamples(); sample++)
+        {
+            channelData[sample] *= gain;
+        }
+        
         float tempValue = channelData[buffer.getNumSamples()-1];
         
         if(tempValue < 0)
@@ -206,6 +212,16 @@ float NewProjectAudioProcessor::getPeakLevelOnChannel(int channel) const
     }
     
     return false;
+}
+
+void NewProjectAudioProcessor::setGain(float newGain)
+{
+    gain = newGain;
+}
+
+juce::AudioProcessorValueTreeState& NewProjectAudioProcessor::getVTS()
+{
+    return parameters;
 }
 
 void NewProjectAudioProcessor::timerCallback()

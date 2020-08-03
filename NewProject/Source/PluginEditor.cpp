@@ -9,15 +9,59 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+InputGainSlider::InputGainSlider()
+{
+    setColour(juce::Slider::ColourIds::textBoxBackgroundColourId, juce::Colours::white);
+    
+    setColour(juce::Slider::ColourIds::textBoxHighlightColourId, juce::Colours::black);
+    
+    setColour(juce::Slider::ColourIds::textBoxTextColourId, juce::Colours::black);
+    
+    getLookAndFeel().setColour(juce::Label::ColourIds::textWhenEditingColourId, juce::Colours::black);
+}
+
+InputGainSlider::~InputGainSlider()
+{
+    
+}
+
+double InputGainSlider::getValueFromText(const juce::String& text)
+{
+    if(text.getIntValue() >= 0)
+    {
+        return 1.0;
+    }
+    return juce::Decibels::decibelsToGain(float(text.getIntValue()));
+}
+
+juce::String InputGainSlider::getTextFromValue(double value)
+{
+    //otherwise it returns +0.00 dB
+    if(value == 1.0)
+    {
+        return "0.00 dB";
+    }
+    
+    return juce::Decibels::toString(juce::Decibels::gainToDecibels(value));
+}
+
 //==============================================================================
 NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+    : AudioProcessorEditor (&p), audioProcessor (p), gainSliderAttachment(audioProcessor.getVTS(), "gain", inputGainSlider)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (400, 300);
     
     audioProcessor.addChangeListener(this);
+    
+    addAndMakeVisible(inputGainSlider);
+    inputGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
+    inputGainSlider.setValue(0.5);
+    inputGainSlider.setRange(0, 1);
+    inputGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, inputGainSlider.getWidth(), 20);
+    inputGainSlider.addListener(this);
+    inputGainSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::black);
 }
 
 NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
@@ -50,11 +94,16 @@ void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
 
 void NewProjectAudioProcessorEditor::resized()
 {
-    
+    inputGainSlider.setBounds(150, 50, 100, 200);
 }
 
 void NewProjectAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     repaint(50, 50, 100, 100);
     repaint(getWidth()-150, 50, 100, 100);
+}
+
+void NewProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
+{
+    audioProcessor.setGain(slider->getValue());
 }
