@@ -4,6 +4,10 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="C9RBha" name="NewProject">
     <GROUP id="{9848B664-A671-F43C-8080-4D891619CFF6}" name="Source">
+      <FILE id="Jnt9Gp" name="ChannelInformation.cpp" compile="1" resource="0"
+            file="Source/ChannelInformation.cpp"/>
+      <FILE id="FdJRNp" name="ChannelInformation.h" compile="0" resource="0"
+            file="Source/ChannelInformation.h"/>
       <FILE id="RIPoTb" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="OB04Je" name="PluginProcessor.h" compile="0" resource="0"
@@ -11,6 +15,9 @@
       <FILE id="aRmTGP" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="uwDtAE" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="OBuNut" name="ChannelMeter.cpp" compile="1" resource="0"
+            file="Source/ChannelMeter.cpp"/>
+      <FILE id="UowEVa" name="ChannelMeter.h" compile="0" resource="0" file="Source/ChannelMeter.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>

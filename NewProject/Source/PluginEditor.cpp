@@ -49,9 +49,6 @@ juce::String InputGainSlider::getTextFromValue(double value)
 NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), gainSliderAttachment(audioProcessor.getVTS(), "gain", inputGainSlider)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (400, 300);
     
     audioProcessor.addChangeListener(this);
     
@@ -61,6 +58,18 @@ NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioP
     inputGainSlider.setRange(0, 1);
     inputGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, inputGainSlider.getWidth(), 20);
     inputGainSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::black);
+    
+    
+    meters.push_back(std::make_unique<ChannelMeter>());
+    
+    std::for_each(meters.begin(), meters.end(), [this](const std::unique_ptr<ChannelMeter>& ptr)
+    {
+        addAndMakeVisible(*ptr);
+    });
+    
+    //addAndMakeVisible(*meters[0]);
+    
+    setSize (400, 300);
 }
 
 NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
@@ -70,7 +79,7 @@ NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
 //==============================================================================
 void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    g.setColour(juce::Colours::black);
+    /*g.setColour(juce::Colours::black);
     
     //Draws the outline for the left channel
     g.drawRect(50, 50, 100, 100);
@@ -88,12 +97,16 @@ void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
     
     rightLevel *= 100;
     
-    g.fillRect(getWidth()-150.0, 50.0 + (100 - rightLevel), 100.0, rightLevel);
+    g.fillRect(getWidth()-150.0, 50.0 + (100 - rightLevel), 100.0, rightLevel);*/
+    
+    
 }
 
 void NewProjectAudioProcessorEditor::resized()
 {
     inputGainSlider.setBounds(150, 50, 100, 200);
+    
+    meters[0]->setBounds(50, 50, 100, 100);
 }
 
 void NewProjectAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster* source)

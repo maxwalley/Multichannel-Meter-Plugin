@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "ChannelMeter.h"
 
 //==============================================================================
 /**
@@ -49,6 +50,8 @@ private:
     InputGainSlider inputGainSlider;
     
     juce::AudioProcessorValueTreeState::SliderAttachment gainSliderAttachment;
-
+    
+    std::vector<std::unique_ptr<ChannelMeter>> meters;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)
 };
