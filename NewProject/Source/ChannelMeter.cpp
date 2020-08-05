@@ -13,7 +13,8 @@
 
 OnOffButton::OnOffButton()  : juce::Button("")
 {
-
+    setClickingTogglesState(true);
+    setToggleState(true, juce::NotificationType::dontSendNotification);
 }
 
 OnOffButton::~OnOffButton()
@@ -23,7 +24,7 @@ OnOffButton::~OnOffButton()
 
 void OnOffButton::paintButton(juce::Graphics& g, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
 {
-    if(shouldDrawButtonAsDown)
+    if(getToggleState())
     {
         g.setColour(juce::Colours::silver);
     }
@@ -34,19 +35,40 @@ void OnOffButton::paintButton(juce::Graphics& g, bool shouldDrawButtonAsHighligh
     
     juce::Path newPath;
     
-    newPath.addArc(getWidth() / 6, getHeight() / 6, getWidth() / 6 * 4, getHeight() / 6 * 4, juce::float_Pi * 0.25, juce::float_Pi * 1.75, true);
+    newPath.addArc(getWidth() / 6, getHeight() / 6, getWidth() / 3 * 2, getHeight() / 3 * 2, juce::float_Pi * 0.25, juce::float_Pi * 1.75, true);
     
     g.strokePath(newPath, juce::PathStrokeType(1.5));
     
     g.drawLine(getWidth() / 2 - 1, getHeight() / 8 , getWidth() / 2 - 1, getHeight() / 2, 1.5);
 }
 
+GainSliderLookAndFeel::GainSliderLookAndFeel()
+{
+    
+}
+
+GainSliderLookAndFeel::~GainSliderLookAndFeel()
+{
+    
+}
+    
+juce::Slider::SliderLayout GainSliderLookAndFeel::getSliderLayout(juce::Slider& slider)
+{
+    juce::Slider::SliderLayout newLayout;
+    
+    //newLayout.textBoxBounds = juce::Rectangle<int> (slider.getParentComponent()->getWidth() / 5 * 4);
+}
+
 //==============================================================================
 ChannelMeter::ChannelMeter() : displayedInformation(temp)
 {
-    
     addAndMakeVisible(gainSlider);
+    gainSlider.setSliderStyle(juce::Slider::LinearVertical);
+    gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 0, 0);
+    
+    
     addAndMakeVisible(onOffButton);
+    onOffButton.addListener(this);
 };
 
 ChannelMeter::ChannelMeter(ChannelInformation& infoToDisplay)  : displayedInformation(infoToDisplay)
@@ -79,7 +101,12 @@ void ChannelMeter::paintOverChildren (juce::Graphics& g)
 
 void ChannelMeter::resized()
 {
-    gainSlider.setBounds(getWidth() / 5 * 4, 0, getWidth(), getHeight());
+    gainSlider.setBounds(getWidth() / 5 * 4, 0, getWidth() / 5, getHeight());
     
     onOffButton.setBounds(0, getHeight() / 5 * 4, getWidth() / 5, getHeight() / 5);
+}
+
+void ChannelMeter::buttonClicked(juce::Button* button)
+{
+    DBG(int(button->getToggleState()));
 }

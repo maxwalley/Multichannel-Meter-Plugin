@@ -21,13 +21,27 @@ public:
     OnOffButton();
     ~OnOffButton();
     
+private:
     void paintButton(juce::Graphics& g, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
+};
+
+/*
+*/
+class GainSliderLookAndFeel  : public juce::LookAndFeel_V4
+{
+public:
+    GainSliderLookAndFeel();
+    ~GainSliderLookAndFeel();
+    
+private:
+    juce::Slider::SliderLayout getSliderLayout(juce::Slider& slider) override;
 };
 
 //==============================================================================
 /*
 */
-class ChannelMeter  : public juce::Component
+class ChannelMeter  : public juce::Component,
+                      public juce::Button::Listener
 {
 public:
     ChannelMeter();
@@ -40,6 +54,8 @@ public:
     void resized() override;
 
 private:
+    void buttonClicked(juce::Button* button) override;
+    
     ChannelInformation temp;
     
     ChannelInformation& displayedInformation;
