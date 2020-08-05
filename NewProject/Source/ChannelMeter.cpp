@@ -56,7 +56,24 @@ juce::Slider::SliderLayout GainSliderLookAndFeel::getSliderLayout(juce::Slider& 
 {
     juce::Slider::SliderLayout newLayout;
     
-    //newLayout.textBoxBounds = juce::Rectangle<int> (slider.getParentComponent()->getWidth() / 5 * 4);
+    int sliderHeightFifth = slider.getHeight() / 5;
+    
+    newLayout.sliderBounds = juce::Rectangle<int> (0, 10, slider.getWidth(), (sliderHeightFifth * 4) - 18);
+    
+    newLayout.textBoxBounds = juce::Rectangle<int> (0, sliderHeightFifth * 4, slider.getWidth(), sliderHeightFifth);
+    
+    return newLayout;
+}
+
+juce::Label* GainSliderLookAndFeel::createSliderTextBox(juce::Slider& slider)
+{
+    std::unique_ptr<juce::Label> sliderLabel = std::make_unique<juce::Label>();
+    
+    sliderLabel->setFont(juce::Font(10));
+    
+    sliderLabel->setColour(juce::Label::textColourId, juce::Colours::black);
+    
+    return sliderLabel.release();
 }
 
 //==============================================================================
@@ -64,8 +81,8 @@ ChannelMeter::ChannelMeter() : displayedInformation(temp)
 {
     addAndMakeVisible(gainSlider);
     gainSlider.setSliderStyle(juce::Slider::LinearVertical);
-    gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 0, 0);
-    
+    //gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 0, 0);
+    gainSlider.setLookAndFeel(&gainSliderLAF);
     
     addAndMakeVisible(onOffButton);
     onOffButton.addListener(this);
@@ -79,6 +96,7 @@ ChannelMeter::ChannelMeter(ChannelInformation& infoToDisplay)  : displayedInform
 
 ChannelMeter::~ChannelMeter()
 {
+    
 }
 
 void ChannelMeter::paint (juce::Graphics& g)
@@ -94,7 +112,7 @@ void ChannelMeter::paintOverChildren (juce::Graphics& g)
     
     g.drawLine(getWidth() / 5 * 4, 0, getWidth() / 5 * 4, getHeight());
     
-    g.drawLine(0, getHeight() / 5 * 4, getWidth() / 5 * 4, getHeight() / 5 * 4);
+    g.drawLine(0, getHeight() / 5 * 4, getWidth(), getHeight() / 5 * 4);
     
     g.drawLine(getWidth() / 5, getHeight() / 5 * 4, getWidth() / 5, getHeight());
 }

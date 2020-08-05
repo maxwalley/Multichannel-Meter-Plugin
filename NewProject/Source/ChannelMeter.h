@@ -35,6 +35,8 @@ public:
     
 private:
     juce::Slider::SliderLayout getSliderLayout(juce::Slider& slider) override;
+    
+    juce::Label* createSliderTextBox(juce::Slider& slider) override;
 };
 
 //==============================================================================
@@ -60,6 +62,7 @@ private:
     
     ChannelInformation& displayedInformation;
     
+    GainSliderLookAndFeel gainSliderLAF;
     juce::Slider gainSlider;
     
     OnOffButton onOffButton;
