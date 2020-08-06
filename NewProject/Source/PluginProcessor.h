@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "ChannelInformation.h"
 
 //==============================================================================
 /**
@@ -60,11 +61,16 @@ public:
     
     juce::AudioProcessorValueTreeState& getVTS();
     
+    ChannelInformation* getInfoForChannel(int index);
+    
 private:
+    void numChannelsChanged() override;
     
     void timerCallback() override;
    
     std::vector<float> peakLevelOnChannel;
+    
+    std::vector<std::unique_ptr<ChannelInformation>> channelInfos;
     
     juce::AudioProcessorValueTreeState parameters;
      //==============================================================================

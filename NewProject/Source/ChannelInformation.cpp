@@ -12,10 +12,10 @@
 
 ChannelInformation::ChannelInformation()  : onState(true), channelName(""), mappedIndex(-1), currentPeakLevel(0.0)
 {
-    
+    juce::Timer::startTimer(10);
 }
 
-ChannelInformation::ChannelInformation(const juce::String& channelName)  : onState(true), channelName(channelName), mappedIndex(-1), currentPeakLevel(0.0)
+ChannelInformation::ChannelInformation(int channelNum)  : onState(true), channelName("Channel " + juce::String(channelNum)), mappedIndex(-1), currentPeakLevel(0.0)
 {
     juce::Timer::startTimer(10);
 }
@@ -67,6 +67,16 @@ void ChannelInformation::setCurrentPeak(float newPeak)
 float ChannelInformation::getCurrentPeak() const
 {
     return currentPeakLevel;
+}
+
+void ChannelInformation::addListener(ChannelInformation::Listener* listener)
+{
+    listeners.push_back(listener);
+}
+
+void ChannelInformation::removeListener(ChannelInformation::Listener* listener)
+{
+    std::remove(listeners.begin(), listeners.end(), listener);
 }
 
 void ChannelInformation::timerCallback()

@@ -43,6 +43,8 @@ public:
 private:
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
     
+    void refreshSliders();
+    
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     NewProjectAudioProcessor& audioProcessor;

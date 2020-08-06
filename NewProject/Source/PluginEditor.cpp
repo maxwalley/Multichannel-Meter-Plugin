@@ -49,7 +49,6 @@ juce::String InputGainSlider::getTextFromValue(double value)
 NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), gainSliderAttachment(audioProcessor.getVTS(), "gain", inputGainSlider)
 {
-    
     audioProcessor.addChangeListener(this);
     
     addAndMakeVisible(inputGainSlider);
@@ -113,4 +112,12 @@ void NewProjectAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcas
 {
     repaint(50, 50, 100, 100);
     repaint(getWidth()-150, 50, 100, 100);
+}
+
+void NewProjectAudioProcessorEditor::refreshSliders()
+{
+    for(int i = meters.size(); i < audioProcessor.getTotalNumInputChannels(); i++)
+    {
+        meters.push_back(std::make_unique<ChannelMeter>(audioProcessor.getInfoForChannel(i)));
+    }
 }

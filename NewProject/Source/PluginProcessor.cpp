@@ -22,7 +22,10 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
                        ), parameters(*this, nullptr, juce::Identifier("Parameters"), juce::AudioProcessorValueTreeState::ParameterLayout(std::make_unique<juce::AudioParameterFloat>("gain", "Gain", juce::NormalisableRange<float>(0.0, 1.0), 0.5)))
 #endif
 {
-    
+    for(int i = 0; i < getTotalNumInputChannels(); i++)
+    {
+        channelInfos.push_back(std::make_unique<ChannelInformation>(i + 1));
+    }
 }
 
 NewProjectAudioProcessor::~NewProjectAudioProcessor()
@@ -217,6 +220,35 @@ float NewProjectAudioProcessor::getPeakLevelOnChannel(int channel) const
 juce::AudioProcessorValueTreeState& NewProjectAudioProcessor::getVTS()
 {
     return parameters;
+}
+
+ChannelInformation* NewProjectAudioProcessor::getInfoForChannel(int index)
+{
+    if(index > 0 && index < channelInfos.size())
+    {
+        return channelInfos[index].get();
+    }
+    
+    return nullptr;
+}
+
+void NewProjectAudioProcessor::numChannelsChanged()
+{
+    //Check both of these please
+    if(getTotalNumInputChannels() < channelInfos.size())
+    {
+        for(int i = channelInfos.size(); i != getTotalNumInputChannels(); i--)
+        {
+            channelInfos.erase(channelInfos.begin() + (i - 1));
+        }
+    }
+    else if(getTotalNumInputChannels() > channelInfos.size())
+    {
+        for(int i = channelInfos.size(); i != getTotalNumInputChannels(); i++)
+        {
+            channelInfos.push_back(std::make_unique<ChannelInformation>(i));
+        }
+    }
 }
 
 void NewProjectAudioProcessor::timerCallback()

@@ -16,7 +16,7 @@ class ChannelInformation  : public juce::Timer
 {
 public:
     ChannelInformation();
-    ChannelInformation(const juce::String& channelName);
+    ChannelInformation(int channelNum);
     
     ~ChannelInformation();
     
@@ -39,6 +39,9 @@ public:
         
         virtual void currentPeakChanged(ChannelInformation* informationChanged) = 0;
     };
+    
+    void addListener(Listener* listener);
+    void removeListener(Listener* listener);
     
 private:
     void timerCallback() override;

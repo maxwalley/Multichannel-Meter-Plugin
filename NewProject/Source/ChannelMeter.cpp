@@ -89,13 +89,19 @@ ChannelMeter::ChannelMeter()  : displayedInformation(temp)
     onOffButton.addListener(this);
     
     addAndMakeVisible(channelNameLabel);
-    channelNameLabel.setText("Test", juce::dontSendNotification);
+    channelNameLabel.setText(displayedInformation.getChannelName(), juce::dontSendNotification);
     channelNameLabel.setColour(juce::Label::textColourId, juce::Colours::black);
     channelNameLabel.setColour(juce::Label::backgroundColourId, juce::Colours::white);
     channelNameLabel.setJustificationType(juce::Justification::centred);
     channelNameLabel.setFont(juce::Font(10));
     
+    addAndMakeVisible(peakLevelLabel);
+    peakLevelLabel.setColour(juce::Label::backgroundColourId, juce::Colours::white);
+    peakLevelLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    peakLevelLabel.setFont(juce::Font(10));
+    
     displayedInformation.setCurrentPeak(0.6);
+    displayedInformation.addListener(this);
 };
 
 ChannelMeter::ChannelMeter(ChannelInformation& infoToDisplay)  : displayedInformation(infoToDisplay)
@@ -111,7 +117,12 @@ ChannelMeter::~ChannelMeter()
 
 void ChannelMeter::paint (juce::Graphics& g)
 {
+    int fifthHeight = getHeight() / 5;
     
+    int meterStart = (fifthHeight * 3) - displayedInformation.getCurrentPeak() * (fifthHeight * 3) + fifthHeight;
+    
+    //Meter
+    g.fillRect(0, meterStart, getWidth() / 5 * 4, fifthHeight * 4 - meterStart);
 }
 
 void ChannelMeter::paintOverChildren (juce::Graphics& g)
@@ -137,11 +148,6 @@ void ChannelMeter::paintOverChildren (juce::Graphics& g)
     
     //Slider label vertical line
     g.drawLine(getWidth() / 5 * 3, 0, getWidth() / 5 * 3, fifthHeight);
-    
-    int meterStart = (fifthHeight * 3) - displayedInformation.getCurrentPeak() * (fifthHeight * 3) + fifthHeight;
-    
-    //Meter
-    g.fillRect(0, meterStart, getWidth() / 5 * 4, fifthHeight * 4 - meterStart);
 }
 
 void ChannelMeter::resized()
@@ -150,15 +156,18 @@ void ChannelMeter::resized()
     
     onOffButton.setBounds(0, getHeight() / 5 * 4, getWidth() / 5, getHeight() / 5);
     
-    channelNameLabel.setBounds(0, 0, getWidth() / 5 * 4, getHeight() / 5);
+    channelNameLabel.setBounds(0, 0, getWidth() / 5 * 3, getHeight() / 5);
+    
+    peakLevelLabel.setBounds(getWidth() / 5, getHeight() / 5 * 4, getWidth() / 5 * 3, getHeight() / 5);
 }
 
 void ChannelMeter::buttonClicked(juce::Button* button)
 {
-    DBG(int(button->getToggleState()));
+    displayedInformation.setOnState(button->getToggleState());
 }
 
 void ChannelMeter::currentPeakChanged(ChannelInformation* informationChanged)
 {
-    
+    repaint(0, getHeight() / 5, getWidth() / 5 * 4, getHeight() / 5 * 3);
+    peakLevelLabel.setText(juce::Decibels::toString( juce::Decibels::gainToDecibels(displayedInformation.getCurrentPeak())), juce::dontSendNotification);
 }

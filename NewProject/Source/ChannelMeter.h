@@ -72,5 +72,7 @@ private:
     
     juce::Label channelNameLabel;
     
+    juce::Label peakLevelLabel;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelMeter)
 };
