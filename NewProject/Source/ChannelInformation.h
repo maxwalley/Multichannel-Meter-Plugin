@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-class ChannelInformation
+class ChannelInformation  : public juce::Timer
 {
 public:
     ChannelInformation();
@@ -32,9 +32,21 @@ public:
     void setCurrentPeak(float newPeak);
     float getCurrentPeak() const;
     
+    class Listener
+    {
+    public:
+        virtual ~Listener(){};
+        
+        virtual void currentPeakChanged(ChannelInformation* informationChanged) = 0;
+    };
+    
 private:
+    void timerCallback() override;
+    
     bool onState;
     juce::String channelName;
     int mappedIndex;
     float currentPeakLevel;
+    
+    std::vector<Listener*> listeners;
 };

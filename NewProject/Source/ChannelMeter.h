@@ -43,7 +43,8 @@ private:
 /*
 */
 class ChannelMeter  : public juce::Component,
-                      public juce::Button::Listener
+                      public juce::Button::Listener,
+                      public ChannelInformation::Listener
 {
 public:
     ChannelMeter();
@@ -54,9 +55,11 @@ public:
     void paintOverChildren(juce::Graphics& g) override;
     
     void resized() override;
-
+    
 private:
     void buttonClicked(juce::Button* button) override;
+    
+    void currentPeakChanged(ChannelInformation* informationChanged) override;
     
     ChannelInformation temp;
     
@@ -66,6 +69,8 @@ private:
     juce::Slider gainSlider;
     
     OnOffButton onOffButton;
+    
+    juce::Label channelNameLabel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelMeter)
 };
