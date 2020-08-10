@@ -47,7 +47,6 @@ class ChannelMeter  : public juce::Component,
                       public ChannelInformation::Listener
 {
 public:
-    ChannelMeter();
     ChannelMeter(ChannelInformation& infoToDisplay);
     ~ChannelMeter() override;
 
@@ -60,8 +59,6 @@ private:
     void buttonClicked(juce::Button* button) override;
     
     void currentPeakChanged(ChannelInformation* informationChanged) override;
-    
-    ChannelInformation temp;
     
     ChannelInformation& displayedInformation;
     

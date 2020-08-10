@@ -49,10 +49,6 @@ private:
     // access the processor object that created it.
     NewProjectAudioProcessor& audioProcessor;
     
-    InputGainSlider inputGainSlider;
-    
-    juce::AudioProcessorValueTreeState::SliderAttachment gainSliderAttachment;
-    
     std::vector<std::unique_ptr<ChannelMeter>> meters;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)

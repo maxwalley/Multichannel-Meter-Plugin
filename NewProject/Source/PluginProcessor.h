@@ -15,8 +15,7 @@
 /**
 */
 class NewProjectAudioProcessor  :   public juce::AudioProcessor,
-                                    public juce::ChangeBroadcaster,
-                                    public juce::Timer
+                                    public juce::ChangeBroadcaster
 {
 public:
     //==============================================================================
@@ -56,23 +55,12 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    //0 for left - 1 for right
-    float getPeakLevelOnChannel(int channel) const;
-    
-    juce::AudioProcessorValueTreeState& getVTS();
-    
     ChannelInformation* getInfoForChannel(int index);
     
 private:
     void numChannelsChanged() override;
     
-    void timerCallback() override;
-   
-    std::vector<float> peakLevelOnChannel;
-    
     std::vector<std::unique_ptr<ChannelInformation>> channelInfos;
-    
-    juce::AudioProcessorValueTreeState parameters;
      //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)
 };

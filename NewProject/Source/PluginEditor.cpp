@@ -47,28 +47,13 @@ juce::String InputGainSlider::getTextFromValue(double value)
 
 //==============================================================================
 NewProjectAudioProcessorEditor::NewProjectAudioProcessorEditor (NewProjectAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), gainSliderAttachment(audioProcessor.getVTS(), "gain", inputGainSlider)
+    : AudioProcessorEditor (&p), audioProcessor (p)
 {
     audioProcessor.addChangeListener(this);
     
-    addAndMakeVisible(inputGainSlider);
-    inputGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    inputGainSlider.setValue(0.5);
-    inputGainSlider.setRange(0, 1);
-    inputGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, inputGainSlider.getWidth(), 20);
-    inputGainSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::black);
-    
-    
-    meters.push_back(std::make_unique<ChannelMeter>());
-    
-    std::for_each(meters.begin(), meters.end(), [this](const std::unique_ptr<ChannelMeter>& ptr)
-    {
-        addAndMakeVisible(*ptr);
-    });
-    
-    //addAndMakeVisible(*meters[0]);
-    
     setSize (400, 300);
+    
+    refreshSliders();
 }
 
 NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
@@ -78,46 +63,40 @@ NewProjectAudioProcessorEditor::~NewProjectAudioProcessorEditor()
 //==============================================================================
 void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    /*g.setColour(juce::Colours::black);
-    
-    //Draws the outline for the left channel
-    g.drawRect(50, 50, 100, 100);
-    
-    float leftLevel = audioProcessor.getPeakLevelOnChannel(0);
-    
-    leftLevel *= 100;
-    
-    g.fillRect(50.0, 50.0 + (100 - leftLevel), 100.0, leftLevel);
-    
-    
-    g.drawRect(getWidth()-150, 50, 100, 100);
-    
-    float rightLevel = audioProcessor.getPeakLevelOnChannel(1);
-    
-    rightLevel *= 100;
-    
-    g.fillRect(getWidth()-150.0, 50.0 + (100 - rightLevel), 100.0, rightLevel);*/
-    
     
 }
 
 void NewProjectAudioProcessorEditor::resized()
 {
-    inputGainSlider.setBounds(150, 50, 100, 200);
-    
-    meters[0]->setBounds(50, 50, 100, 100);
+    if(meters.size() >= 1)
+    {
+        meters[0]->setBounds(50, 50, 100, 100);
+    }
 }
 
 void NewProjectAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    repaint(50, 50, 100, 100);
-    repaint(getWidth()-150, 50, 100, 100);
+    refreshSliders();
 }
 
 void NewProjectAudioProcessorEditor::refreshSliders()
 {
-    for(int i = meters.size(); i < audioProcessor.getTotalNumInputChannels(); i++)
+    if(meters.size() != audioProcessor.getTotalNumInputChannels())
     {
-        meters.push_back(std::make_unique<ChannelMeter>(audioProcessor.getInfoForChannel(i)));
+    
+        //If meters need to be added
+        for(size_t i = meters.size(); i < audioProcessor.getTotalNumInputChannels(); i++)
+        {
+            meters.push_back(std::make_unique<ChannelMeter>(*(audioProcessor.getInfoForChannel(i))));
+        
+            addAndMakeVisible(meters[i].get());
+        }
+    
+        //If meters need to be removed
+        for(size_t i = meters.size() - 1; i > audioProcessor.getTotalNumInputChannels(); i--)
+        {
+            meters.erase(meters.begin() + i);
+        }
     }
+    resized();
 }

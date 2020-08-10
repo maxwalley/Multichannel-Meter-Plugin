@@ -15,7 +15,6 @@
 class ChannelInformation  : public juce::Timer
 {
 public:
-    ChannelInformation();
     ChannelInformation(int channelNum);
     
     ~ChannelInformation();
@@ -31,6 +30,8 @@ public:
     
     void setCurrentPeak(float newPeak);
     float getCurrentPeak() const;
+    
+    float getActualPeak() const;
     
     class Listener
     {
@@ -49,7 +50,10 @@ private:
     bool onState;
     juce::String channelName;
     int mappedIndex;
+    
+    //Current peak is a level which drops for the meter and actual peak is a level that does not drop for the label
     float currentPeakLevel;
+    float actualPeak;
     
     std::vector<Listener*> listeners;
 };

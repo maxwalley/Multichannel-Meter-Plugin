@@ -19,7 +19,7 @@ NewProjectAudioProcessor::NewProjectAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), parameters(*this, nullptr, juce::Identifier("Parameters"), juce::AudioProcessorValueTreeState::ParameterLayout(std::make_unique<juce::AudioParameterFloat>("gain", "Gain", juce::NormalisableRange<float>(0.0, 1.0), 0.5)))
+                       )
 #endif
 {
     for(int i = 0; i < getTotalNumInputChannels(); i++)
@@ -99,9 +99,6 @@ void NewProjectAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    peakLevelOnChannel.clear();
-    
-    juce::Timer::startTimer(10);
 }
 
 void NewProjectAudioProcessor::releaseResources()
@@ -139,8 +136,6 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     juce::ScopedNoDenormals noDenormals;
     int totalNumInputChannels  = getTotalNumInputChannels();
     int totalNumOutputChannels = getTotalNumOutputChannels();
-    
-    peakLevelOnChannel.resize(totalNumInputChannels, 0.0);
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -162,11 +157,6 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         float* channelData = buffer.getWritePointer (channel);
-
-        for(int sample = 0; sample < buffer.getNumSamples(); sample++)
-        {
-            channelData[sample] *= *parameters.getRawParameterValue("gain");
-        }
         
         float tempValue = channelData[buffer.getNumSamples()-1];
         
@@ -175,9 +165,9 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             tempValue *= -1;
         }
         
-        if(tempValue > peakLevelOnChannel[channel])
+        if(tempValue > channelInfos[channel]->getCurrentPeak())
         {
-            peakLevelOnChannel[channel] = tempValue;
+            channelInfos[channel]->setCurrentPeak(tempValue);
         }
     }
 }
@@ -190,6 +180,8 @@ bool NewProjectAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 {
+    std::cout << "Num channels atm is: " << getTotalNumInputChannels() << std::endl;
+    
     return new NewProjectAudioProcessorEditor (*this);
 }
 
@@ -207,24 +199,9 @@ void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeIn
     // whose contents will have been created by the getStateInformation() call.
 }
 
-float NewProjectAudioProcessor::getPeakLevelOnChannel(int channel) const
-{
-    if(channel >= 0 && channel < peakLevelOnChannel.size())
-    {
-        return peakLevelOnChannel[channel];
-    }
-    
-    return false;
-}
-
-juce::AudioProcessorValueTreeState& NewProjectAudioProcessor::getVTS()
-{
-    return parameters;
-}
-
 ChannelInformation* NewProjectAudioProcessor::getInfoForChannel(int index)
 {
-    if(index > 0 && index < channelInfos.size())
+    if(index >= 0 && index < channelInfos.size())
     {
         return channelInfos[index].get();
     }
@@ -249,21 +226,7 @@ void NewProjectAudioProcessor::numChannelsChanged()
             channelInfos.push_back(std::make_unique<ChannelInformation>(i));
         }
     }
-}
-
-void NewProjectAudioProcessor::timerCallback()
-{
-    for(int i = 0; i < peakLevelOnChannel.size(); i++)
-    {
-        if(peakLevelOnChannel.size() > 0)
-        {
-            if(peakLevelOnChannel[i] > 0.01)
-            {
-                peakLevelOnChannel[i] = peakLevelOnChannel[i] - 0.01;
-                sendChangeMessage();
-            }
-        }
-    }
+    
 }
 
 //==============================================================================
