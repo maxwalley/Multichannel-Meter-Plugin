@@ -10,7 +10,7 @@
 
 #include "ChannelInformation.h"
 
-ChannelInformation::ChannelInformation(int channelNum)  : onState(true), channelName("Channel " + juce::String(channelNum)), mappedIndex(-1), currentPeakLevel(0.0)
+ChannelInformation::ChannelInformation(int channelNum)  : onState(true), channelName("Channel " + juce::String(channelNum)), mappedIndex(-1), currentPeakLevel(0.0), actualPeak(0.0), gain(0.0)
 {
     juce::Timer::startTimer(10);
 }
@@ -74,6 +74,16 @@ float ChannelInformation::getActualPeak() const
     return actualPeak;
 }
 
+void ChannelInformation::setGain(float newGain)
+{
+    gain = newGain;
+}
+
+float ChannelInformation::getGain() const
+{
+    return gain;
+}
+
 void ChannelInformation::addListener(ChannelInformation::Listener* listener)
 {
     listeners.push_back(listener);
@@ -81,7 +91,12 @@ void ChannelInformation::addListener(ChannelInformation::Listener* listener)
 
 void ChannelInformation::removeListener(ChannelInformation::Listener* listener)
 {
-    std::remove(listeners.begin(), listeners.end(), listener);
+    auto iteratorToDel = std::find(listeners.begin(), listeners.end(), listener);
+    
+    if(iteratorToDel != listeners.end())
+    {
+        listeners.erase(iteratorToDel);
+    }
 }
 
 void ChannelInformation::timerCallback()
@@ -97,6 +112,9 @@ void ChannelInformation::timerCallback()
             currentPeakLevel = 0.0;
             actualPeak = 0.0;
         }
-        std::for_each(listeners.begin(), listeners.end(), [this](Listener* currentLis){currentLis->currentPeakChanged(this);});
+        std::for_each(listeners.begin(), listeners.end(), [this](Listener* currentLis)
+        {
+            currentLis->currentPeakChanged(this);
+        });
     }
 }

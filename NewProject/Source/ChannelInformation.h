@@ -33,6 +33,9 @@ public:
     
     float getActualPeak() const;
     
+    void setGain(float newGain);
+    float getGain() const;
+    
     class Listener
     {
     public:
@@ -54,6 +57,8 @@ private:
     //Current peak is a level which drops for the meter and actual peak is a level that does not drop for the label
     float currentPeakLevel;
     float actualPeak;
+    
+    float gain;
     
     std::vector<Listener*> listeners;
 };

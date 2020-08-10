@@ -84,7 +84,9 @@ ChannelMeter::ChannelMeter(ChannelInformation& infoToDisplay)  : displayedInform
     addAndMakeVisible(gainSlider);
     gainSlider.setSliderStyle(juce::Slider::LinearVertical);
     gainSlider.setRange(0.0, 1.0, 0.01);
+    gainSlider.setValue(0.5);
     gainSlider.setLookAndFeel(&gainSliderLAF);
+    gainSlider.addListener(this);
     
     addAndMakeVisible(onOffButton);
     onOffButton.addListener(this);
@@ -107,7 +109,7 @@ ChannelMeter::ChannelMeter(ChannelInformation& infoToDisplay)  : displayedInform
 
 ChannelMeter::~ChannelMeter()
 {
-    
+    displayedInformation.removeListener(this);
 }
 
 void ChannelMeter::paint (juce::Graphics& g)
@@ -165,4 +167,9 @@ void ChannelMeter::currentPeakChanged(ChannelInformation* informationChanged)
 {
     repaint(0, getHeight() / 5, getWidth() / 5 * 4, getHeight() / 5 * 3);
     peakLevelLabel.setText(juce::Decibels::toString( juce::Decibels::gainToDecibels(displayedInformation.getActualPeak())), juce::dontSendNotification);
+}
+
+void ChannelMeter::sliderValueChanged(juce::Slider* slider)
+{
+    displayedInformation.setGain(slider->getValue());
 }

@@ -44,7 +44,8 @@ private:
 */
 class ChannelMeter  : public juce::Component,
                       public juce::Button::Listener,
-                      public ChannelInformation::Listener
+                      public ChannelInformation::Listener,
+                      public juce::Slider::Listener
 {
 public:
     ChannelMeter(ChannelInformation& infoToDisplay);
@@ -59,6 +60,8 @@ private:
     void buttonClicked(juce::Button* button) override;
     
     void currentPeakChanged(ChannelInformation* informationChanged) override;
+    
+    void sliderValueChanged(juce::Slider* slider) override;
     
     ChannelInformation& displayedInformation;
     

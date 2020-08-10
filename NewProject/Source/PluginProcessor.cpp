@@ -158,6 +158,11 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     {
         float* channelData = buffer.getWritePointer (channel);
         
+        for(int sample = 0; sample < buffer.getNumSamples(); sample++)
+        {
+            channelData[sample] *= channelInfos[channel]->getGain();
+        }
+        
         float tempValue = channelData[buffer.getNumSamples()-1];
         
         if(tempValue < 0)
@@ -180,8 +185,6 @@ bool NewProjectAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 {
-    std::cout << "Num channels atm is: " << getTotalNumInputChannels() << std::endl;
-    
     return new NewProjectAudioProcessorEditor (*this);
 }
 
