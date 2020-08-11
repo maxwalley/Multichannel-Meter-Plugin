@@ -98,6 +98,7 @@ ChannelMeter::ChannelMeter(ChannelInformation& infoToDisplay)  : displayedInform
     channelNameLabel.setColour(juce::Label::backgroundColourId, juce::Colours::white);
     channelNameLabel.setJustificationType(juce::Justification::centred);
     channelNameLabel.setFont(juce::Font(10));
+    channelNameLabel.addMouseListener(this, false);
     
     addAndMakeVisible(peakLevelLabel);
     peakLevelLabel.setColour(juce::Label::backgroundColourId, juce::Colours::white);
@@ -146,6 +147,9 @@ void ChannelMeter::paintOverChildren (juce::Graphics& g)
     
     //Slider label vertical line
     g.drawLine(getWidth() / 5 * 3, 0, getWidth() / 5 * 3, fifthHeight);
+    
+    //Resets the constrainer if the bounds of the meter have changed
+    constrainer.setMinimumOnscreenAmounts(getHeight(), getWidth(), getHeight(), getWidth());
 }
 
 void ChannelMeter::resized()
@@ -173,4 +177,20 @@ void ChannelMeter::currentPeakChanged(ChannelInformation* informationChanged)
 void ChannelMeter::sliderValueChanged(juce::Slider* slider)
 {
     displayedInformation.setGain(slider->getValue());
+}
+
+void ChannelMeter::mouseDown(const juce::MouseEvent& event)
+{
+    if(event.originalComponent == &channelNameLabel)
+    {
+        dragger.startDraggingComponent(this, event);
+    }
+}
+
+void ChannelMeter::mouseDrag(const juce::MouseEvent& event)
+{
+    if(event.originalComponent == &channelNameLabel)
+    {
+        dragger.dragComponent(this, event, &constrainer);
+    }
 }

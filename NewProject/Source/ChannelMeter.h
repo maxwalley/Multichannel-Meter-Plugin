@@ -63,6 +63,10 @@ private:
     
     void sliderValueChanged(juce::Slider* slider) override;
     
+    void mouseDown(const juce::MouseEvent& event) override;
+    
+    void mouseDrag(const juce::MouseEvent& event) override;
+    
     ChannelInformation& displayedInformation;
     
     GainSliderLookAndFeel gainSliderLAF;
@@ -73,6 +77,10 @@ private:
     juce::Label channelNameLabel;
     
     juce::Label peakLevelLabel;
+    
+    juce::ComponentDragger dragger;
+    
+    juce::ComponentBoundsConstrainer constrainer;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelMeter)
 };
