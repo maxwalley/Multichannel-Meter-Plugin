@@ -30,11 +30,6 @@ bool ChannelInformation::getOnState() const
     return onState;
 }
 
-void ChannelInformation::setChannelName(const juce::String& newName)
-{
-    channelName = newName;
-}
-
 juce::String ChannelInformation::getChannelName() const
 {
     return channelName;

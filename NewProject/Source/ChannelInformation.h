@@ -22,7 +22,6 @@ public:
     void setOnState(bool newState);
     bool getOnState() const;
     
-    void setChannelName(const juce::String& newName);
     juce::String getChannelName() const;
     
     void setMappedIndex(int newIndex);
@@ -51,7 +50,7 @@ private:
     void timerCallback() override;
     
     bool onState;
-    juce::String channelName;
+    const juce::String channelName;
     int mappedIndex;
     
     //Current peak is a level which drops for the meter and actual peak is a level that does not drop for the label

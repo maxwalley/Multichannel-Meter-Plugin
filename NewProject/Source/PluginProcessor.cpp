@@ -156,23 +156,26 @@ void NewProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        float* channelData = buffer.getWritePointer (channel);
-        
-        for(int sample = 0; sample < buffer.getNumSamples(); sample++)
+        if(channelInfos[channel]->getOnState())
         {
-            channelData[sample] *= channelInfos[channel]->getGain();
-        }
+            float* channelData = buffer.getWritePointer (channel);
         
-        float tempValue = channelData[buffer.getNumSamples()-1];
+            for(int sample = 0; sample < buffer.getNumSamples(); sample++)
+            {
+                channelData[sample] *= channelInfos[channel]->getGain();
+            }
         
-        if(tempValue < 0)
-        {
-            tempValue *= -1;
-        }
+            float tempValue = channelData[buffer.getNumSamples()-1];
         
-        if(tempValue > channelInfos[channel]->getCurrentPeak())
-        {
-            channelInfos[channel]->setCurrentPeak(tempValue);
+            if(tempValue < 0)
+            {
+                tempValue *= -1;
+            }
+        
+            if(tempValue > channelInfos[channel]->getCurrentPeak())
+            {
+                channelInfos[channel]->setCurrentPeak(tempValue);
+            }
         }
     }
 }

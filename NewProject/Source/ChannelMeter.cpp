@@ -26,11 +26,11 @@ void OnOffButton::paintButton(juce::Graphics& g, bool shouldDrawButtonAsHighligh
 {
     if(getToggleState())
     {
-        g.setColour(juce::Colours::silver);
+        g.setColour(juce::Colours::black);
     }
     else
     {
-        g.setColour(juce::Colours::black);
+        g.setColour(juce::Colours::silver);
     }
     
     juce::Path newPath;
