@@ -82,5 +82,7 @@ private:
     
     juce::ComponentBoundsConstrainer constrainer;
     
+    juce::ResizableCornerComponent resizer;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelMeter)
 };

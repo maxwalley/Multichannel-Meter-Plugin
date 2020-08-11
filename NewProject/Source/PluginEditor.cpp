@@ -68,14 +68,18 @@ void NewProjectAudioProcessorEditor::paint (juce::Graphics& g)
 
 void NewProjectAudioProcessorEditor::resized()
 {
-    if(meters.size() == 1)
-    {
-        meters[0]->setBounds(getWidth() / 2 - 50, getHeight() / 2 - 50, 100, 100);
-    }
-    else if (meters.size() == 2)
+    //Preset for stereo
+    if (meters.size() == 2)
     {
         meters[0]->setBounds(getWidth() / 3 - 50, getHeight() / 2 - 50, 100, 100);
         meters[1]->setBounds((getWidth() / 3) * 2 - 50, getHeight() / 2 - 50, 100, 100);
+    }
+    else
+    {
+        std::for_each(meters.begin(), meters.end(), [this](std::unique_ptr<ChannelMeter>& meter)
+        {
+            meter->setBounds(getWidth() / 2 - 50, getHeight() / 2 - 50, 100, 100);
+        });
     }
 }
 

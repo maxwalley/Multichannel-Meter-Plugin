@@ -80,7 +80,7 @@ juce::Label* GainSliderLookAndFeel::createSliderTextBox(juce::Slider& slider)
 
 //==============================================================================
 
-ChannelMeter::ChannelMeter(ChannelInformation& infoToDisplay)  : displayedInformation(infoToDisplay)
+ChannelMeter::ChannelMeter(ChannelInformation& infoToDisplay)  : displayedInformation(infoToDisplay), resizer(this, &constrainer)
 {
     addAndMakeVisible(gainSlider);
     gainSlider.setSliderStyle(juce::Slider::LinearVertical);
@@ -107,6 +107,11 @@ ChannelMeter::ChannelMeter(ChannelInformation& infoToDisplay)  : displayedInform
     
     displayedInformation.setCurrentPeak(0.6);
     displayedInformation.addListener(this);
+    
+    constrainer.setMinimumSize(30, 30);
+    constrainer.setFixedAspectRatio(1);
+    
+    addAndMakeVisible(resizer);
 }
 
 ChannelMeter::~ChannelMeter()
@@ -147,6 +152,8 @@ void ChannelMeter::paintOverChildren (juce::Graphics& g)
     
     //Slider label vertical line
     g.drawLine(getWidth() / 5 * 3, 0, getWidth() / 5 * 3, fifthHeight);
+    
+    resizer.setBounds(getWidth() - 10, getHeight() - 10, 10, 10);
     
     //Resets the constrainer if the bounds of the meter have changed
     constrainer.setMinimumOnscreenAmounts(getHeight(), getWidth(), getHeight(), getWidth());
