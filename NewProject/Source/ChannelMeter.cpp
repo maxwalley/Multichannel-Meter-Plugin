@@ -70,6 +70,7 @@ juce::Label* GainSliderLookAndFeel::createSliderTextBox(juce::Slider& slider)
     std::unique_ptr<juce::Label> sliderLabel = std::make_unique<juce::Label>();
     
     sliderLabel->setColour(juce::Label::textColourId, juce::Colours::black);
+    sliderLabel->setColour(juce::Label::textWhenEditingColourId, juce::Colours::black);
     
     sliderLabel->setFont(juce::Font(10));
     sliderLabel->setJustificationType(juce::Justification::centred);
